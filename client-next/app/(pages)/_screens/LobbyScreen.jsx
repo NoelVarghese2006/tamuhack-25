@@ -14,7 +14,7 @@ const LobbyScreen = ({ setRoomId, setGame, setTitle, setDifficulty, setTopic, se
 
         if (!gameCode) return;
 
-        const url = `${process.env.NEXT_PUBLIC_SITE_URL}/api/games?gameId=${gameCode}`;
+        const url = `/api/games?gameId=${gameCode}`;
 
         try {
             const response = await fetch(url);

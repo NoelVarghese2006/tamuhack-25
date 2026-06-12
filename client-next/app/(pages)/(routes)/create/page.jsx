@@ -38,7 +38,7 @@ const CreatePage = () => {
 
         setDisabled(true);
 
-        const url = `${process.env.NEXT_PUBLIC_SITE_URL}/api/games`;
+        const url = '/api/games';
 
         const userId = user?.id;
         const { randomUUID } = new ShortUniqueId({ dictionary: 'number', length: 7 });

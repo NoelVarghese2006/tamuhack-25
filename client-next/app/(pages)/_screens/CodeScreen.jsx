@@ -63,13 +63,14 @@ const CodeScreen = ({ question, setAnswer }) => {
     return <span>Browser doesn't support speech recognition.</span>;
   }
   
-  const serverUrl = "wss://tamuhack-wuv40ylz.livekit.cloud";
+  const serverUrl = process.env.NEXT_PUBLIC_LIVEKIT_URL || "wss://tamuhack-wuv40ylz.livekit.cloud";
 
   // Fetch token logic
   useEffect(() => {
     const fetchToken = async () => {
       try {
-        const response = await fetch("http://localhost:8000/getToken");
+        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
+        const response = await fetch(`${backendUrl}/getToken`);
         if (!response.ok) {
           throw new Error("Failed to fetch token");
         }

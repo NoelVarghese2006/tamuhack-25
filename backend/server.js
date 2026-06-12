@@ -9,9 +9,13 @@ const { Room } = require('livekit-server-sdk');  // Import Room class
 require('dotenv').config();
 app.use(cors());
 
+const allowedOrigins = process.env.FRONTEND_URL 
+    ? [process.env.FRONTEND_URL, "http://localhost:3000"] 
+    : "http://localhost:3000";
+
 const io = socketIo(server, {
     cors: {
-        origin: "http://localhost:3000",
+        origin: allowedOrigins,
         methods: ["GET", "POST"],
     }
 });
@@ -127,8 +131,8 @@ const generateRoomName = () => {
 const createToken = async () => {
     const roomName = generateRoomName();
     const participantName = 'player';
-    const apiKey = 'APIaESJERDfgY2i';
-    const apiSecret = 'VOfv78FEoHlb8Ty7YyhsQd70MC7NzUxvMSEfcL4dbSk';
+    const apiKey = process.env.LIVEKIT_API_KEY || 'APIaESJERDfgY2i';
+    const apiSecret = process.env.LIVEKIT_API_SECRET || 'VOfv78FEoHlb8Ty7YyhsQd70MC7NzUxvMSEfcL4dbSk';
 
 
     const at = new AccessToken(apiKey, apiSecret, {

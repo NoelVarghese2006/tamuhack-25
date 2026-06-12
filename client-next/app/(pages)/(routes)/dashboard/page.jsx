@@ -13,7 +13,7 @@ const DashboardPage = () => {
     const fetchGame = async () => {
       if (!user) return;
 
-      const url = `${process.env.NEXT_PUBLIC_SITE_URL}/api/games?createdBy=${user.id}`;
+      const url = `/api/games?createdBy=${user.id}`;
       try {
         const response = await fetch(url, { cache: "no-store" });
         if (!response.ok) {

@@ -11,7 +11,7 @@ const DashboardCard = ({ title, code }) => {
     setMoved(!moved);
 
     try {
-      const url = `${process.env.NEXT_PUBLIC_SITE_URL}/api/games?gameId=${code}`;
+      const url = `/api/games?gameId=${code}`;
     const response = await fetch(url, {
       method: 'DELETE',
     });

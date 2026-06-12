@@ -40,7 +40,8 @@ export async function POST(request) {
     }
 
     if (event.type === 'user.created') {
-        const url = `${process.env.NEXT_PUBLIC_SITE_URL}/api/users`;
+        const origin = process.env.NEXT_PUBLIC_SITE_URL || (request.nextUrl ? request.nextUrl.origin : new URL(request.url).origin);
+        const url = `${origin}/api/users`;
 
         try {
             const response = await fetch(url, {

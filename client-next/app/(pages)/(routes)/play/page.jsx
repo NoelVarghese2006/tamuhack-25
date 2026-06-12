@@ -1,5 +1,6 @@
 "use client"
 
+import 'regenerator-runtime/runtime';
 import React, { useEffect, useState } from 'react'
 import LobbyScreen from '../../_screens/LobbyScreen'
 import StartScreen from '../../_screens/StartScreen';
@@ -27,7 +28,7 @@ const PlayPage = () => {
 
   // Game states
   const [question, setQuestion] = useState(null);
-  const [answer, setAnswer] = useState("");
+  const [answer, setAnswer] = useState("");j
   const [feedback, setFeedback] = useState(null);
   const [intermission, setIntermission] = useState(false);
 
@@ -38,7 +39,8 @@ const PlayPage = () => {
   const [rounds, setRounds] = useState("");
 
   useEffect(() => {
-    socket = io('http://localhost:8000');
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
+    socket = io(backendUrl);
 
     socket.on('setNewPlayer', (player) => {
       setPlayer(player);

@@ -28,7 +28,7 @@ const PlayPage = () => {
 
   // Game states
   const [question, setQuestion] = useState(null);
-  const [answer, setAnswer] = useState("");j
+  const [answer, setAnswer] = useState("");
   const [feedback, setFeedback] = useState(null);
   const [intermission, setIntermission] = useState(false);
 

@@ -52,7 +52,7 @@ const Navbar = () => {
                     {user ? (
                         <UserButton />
                     ) : (
-                        <Link href='sign-in'>
+                        <Link href='/sign-in'>
                             <Button variant='default' className='hidden md:block rounded-full bg-gradient-to-r from-purple-800 to-purple-500 text-white'>
                                 Log in
                             </Button>

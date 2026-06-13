@@ -12,19 +12,17 @@ const DashboardCard = ({ title, code }) => {
 
     try {
       const url = `/api/games?gameId=${code}`;
-    const response = await fetch(url, {
-      method: 'DELETE',
-    });
-    if (!response.ok) {
-      throw new Error(`Failed to delete: ${response.message}`);
-    }
-    toast.success('Game deleted');
-    return new Response(response, { status: 200 });
+      const response = await fetch(url, {
+        method: 'DELETE',
+      });
+      if (!response.ok) {
+        throw new Error(`Failed to delete: ${response.statusText}`);
+      }
+      toast.success('Game deleted');
     } catch (error) {
+      console.error("Delete error:", error);
       toast.error('Something went wrong');
-      throw new Error(`Failed to delete: ${response.message}`);
     }
-    
   };
 
   return (

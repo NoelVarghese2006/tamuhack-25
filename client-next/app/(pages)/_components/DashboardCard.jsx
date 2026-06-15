@@ -8,22 +8,26 @@ const DashboardCard = ({ title, code }) => {
   const [moved, setMoved] = useState(false);
 
   const handleClick = async () => {
-    setMoved(!moved);
-
     try {
       const url = `/api/games?gameId=${code}`;
       const response = await fetch(url, {
         method: 'DELETE',
       });
+
       if (!response.ok) {
-        throw new Error(`Failed to delete: ${response.statusText}`);
+        // Attempt to get error message from server response
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `Error: ${response.statusText}`);
       }
+
+      setMoved(true); // Trigger animation only on success
       toast.success('Game deleted');
     } catch (error) {
-      console.error("Delete error:", error);
-      toast.error('Something went wrong');
+      toast.error(error.message || 'Something went wrong');
+      console.error('Delete failed:', error);
     }
   };
+
 
   return (
     <div className={`transition-transform transform ${moved ? 'translate-x-[-1500px]' : ''} w-[300px] h-[120px] bg-gray-900 border-[1px] border-white rounded-md z-10 relative`}>

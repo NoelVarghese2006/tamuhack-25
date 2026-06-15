@@ -1,3 +1,5 @@
+"use client"
+
 import React, { useState, useRef, useEffect } from 'react'
 import { Button } from "@/components/ui/button";
 import { Textarea } from '@/components/ui/textarea';
@@ -6,6 +8,7 @@ import { LiveKitRoom, GridLayout, ParticipantTile, TrackRefContext, RoomAudioRen
 import '@livekit/components-styles';
 import { Track } from 'livekit-client';
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
+
 
 
 function MyVideoConference() {
@@ -63,44 +66,73 @@ const CodeScreen = ({ question, setAnswer }) => {
     return <span>Browser doesn't support speech recognition.</span>;
   }
   
-  const serverUrl = process.env.NEXT_PUBLIC_LIVEKIT_URL || "wss://tamuhack-wuv40ylz.livekit.cloud";
+  const serverUrl = process.env.NEXT_PUBLIC_LIVEKIT_URL || "wss://hi-9p8faniz.livekit.cloud";
 
-  // Fetch token logic
-  useEffect(() => {
-    const fetchToken = async () => {
-      try {
-        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
-        const response = await fetch(`${backendUrl}/getToken`);
-        if (!response.ok) {
-          throw new Error("Failed to fetch token");
-        }
-        const data = await response.json();
-        setToken(data.token);
-      } catch (error) {
-        console.error("Error fetching token:", error);
+// Fetch token logic
+useEffect(() => {
+
+  const fetchToken = async () => {
+    try {
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
+      const response = await fetch(`${backendUrl}/getToken`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch token");
       }
-    };
+      const data = await response.json();
+      setToken(data.token);
+    } catch (error) {
+        console.error('Error fetching token', error);
+    }
+  };
 
-    fetchToken();
+  fetchToken();
+}, []);
+
+  // Start recording once on mount
+  useEffect(() => {
+    startRecording();
+    return () => stopRecording();
   }, []);
 
-  // Timer countdown logic
+  // Timer countdown logic - separated from media logic
   useEffect(() => {
-    let timer;
-    if (counter > 0) {
-      startRecording();
-      timer = setInterval(() => {
-        setCounter((prev) => prev - 1);
-      }, 1000);
-    } else if (counter === 0) {
+    if (counter === 0) {
       stopRecording();
-      handleSubmit(); // Redirect to the results page when time is up
+      handleSubmit();
+      return;
     }
+
+    const timer = setInterval(() => {
+      setCounter((prev) => prev - 1);
+    }, 1000);
 
     return () => clearInterval(timer);
   }, [counter]);
 
-  // Start recording
+// Control speech recognition based on microphone state
+useEffect(() => {
+    if (microphone) {
+      resetTranscript();
+      SpeechRecognition.startListening({ continuous: true });
+
+      setRecording(true);
+    } else {
+      SpeechRecognition.stopListening();
+
+      setRecording(false);
+    }
+  }, [microphone]);
+
+// Log transcript updates
+useEffect(() => {
+  if (listening) {
+    // Log or handle transcript updates while listening
+    // (keep lightweight to avoid performance issues)
+    console.log('Transcript updated:', transcript);
+  }
+}, [transcript, listening]);
+
+// Start recording
   const startRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -128,8 +160,9 @@ const CodeScreen = ({ question, setAnswer }) => {
   }
 
   const handleChange = (e) => {
-    setTextInput(e.target.value);
-    console.log(textInput);
+    const newValue = e.target.value;
+    setTextInput(newValue);
+
   }
 
   const handleSubmit = () => {
@@ -137,10 +170,10 @@ const CodeScreen = ({ question, setAnswer }) => {
       SpeechRecognition.stopListening();
       setRecording(false);
       setAnswer(transcript);
+
     } else {
-      console.log("something submitted");
+
       if (!textInput) return;
-      console.log("text no work")
       setAnswer(textInput);
     }
   }
@@ -176,14 +209,11 @@ const CodeScreen = ({ question, setAnswer }) => {
           )}
           <div className='flex items-start justify-start bg-slate-900 w-full max-h-[200px] rounded-3xl'>
             <div className='flex items-center justify-center text-center h-full w-full text-white gap-16'>
-              <button onClick={(() => {
-                setMicrophone(true);
-                setRecording(!recording);
-              })}>
-                {!recording ? (
-                  <FaMicrophone className='text-6xl' onClick={() => {SpeechRecognition.startListening({ continuous: true })}} />
+              <button onClick={() => setMicrophone((prev) => !prev)}>
+                {microphone ? (
+                  <FaMicrophone className='text-6xl text-red-600' />
                 ) : (
-                  <FaMicrophone className='text-6xl text-red-600' onClick={SpeechRecognition.stopListening} />
+                  <FaMicrophone className='text-6xl' />
                 )}
               </button>
               <Button className="px-12 py-4 bg-white text-black hover:bg-gray-100 m-5"

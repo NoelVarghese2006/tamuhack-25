@@ -8,7 +8,8 @@ const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
 const genAI = new GoogleGenerativeAI(apiKey);
 
 const model = genAI.getGenerativeModel({
-    model: "gemini-2.0-flash-exp",
+    model: 'gemini-3.1-flash-lite',
+    systemInstruction: "You are a JSON generator. You must ONLY output valid JSON. Do not include markdown code blocks, backticks, conversational intro/outro text, lists, or asterisks. Follow the requested JSON schema exactly.",
 });
 
 const generationConfig = {

@@ -7,11 +7,12 @@ const app = express();
 const server = createServer(app);
 const { Room } = require('livekit-server-sdk');  // Import Room class
 require('dotenv').config();
-app.use(cors());
+
 
 const allowedOrigins = process.env.FRONTEND_URL 
     ? [process.env.FRONTEND_URL, "http://localhost:3000"] 
     : "http://localhost:3000";
+app.use(cors({ origin: allowedOrigins, methods: ["GET", "POST"], credentials: true }));
 
 const io = socketIo(server, {
     cors: {

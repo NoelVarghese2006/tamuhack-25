@@ -13,14 +13,24 @@ const allowedOrigins = process.env.FRONTEND_URL
     ? [process.env.FRONTEND_URL, "http://localhost:3000"]
     : ["https://tamuhack-25.vercel.app", "http://localhost:3000"];
 app.use(cors({ origin: allowedOrigins, methods: ["GET", "POST"], credentials: true }));
+// Log every incoming HTTP request for debugging CORS
+app.use((req, res, next) => {
+  console.log(`[CORS LOG] ${req.method} ${req.originalUrl} – Origin: ${req.headers.origin}`);
+  next();
+});
 app.options('*', cors({ origin: allowedOrigins, methods: ["GET", "POST", "OPTIONS"], credentials: true }));
 
 const io = socketIo(server, {
     cors: {
-        origin: "*",
+        origin: allowedOrigins,
         methods: ["GET", "POST"],
         credentials: true,
     }
+});
+// Log Socket.io handshake details
+io.use((socket, next) => {
+  console.log(`[SOCKET LOG] Handshake from Origin: ${socket.handshake.headers.origin}`);
+  next();
 });
 
 let games = [];
@@ -153,6 +163,7 @@ const createToken = async () => {
 
 
 app.get('/getToken', async (req, res) => {
+  console.log(`[GET /getToken] Request Origin: ${req.headers.origin}`);
     try {
         console.log("Generating token...");
         const token = await createToken();

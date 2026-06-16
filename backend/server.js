@@ -9,14 +9,14 @@ const { Room } = require('livekit-server-sdk');  // Import Room class
 require('dotenv').config();
 
 
-const allowedOrigins = process.env.FRONTEND_URL 
-    ? [process.env.FRONTEND_URL, "http://localhost:3000"] 
-    : "http://localhost:3000";
+const allowedOrigins = process.env.FRONTEND_URL
+    ? [process.env.FRONTEND_URL, "http://localhost:3000"]
+    : ["https://tamuhack-25.vercel.app", "http://localhost:3000"];
 app.use(cors({ origin: allowedOrigins, methods: ["GET", "POST"], credentials: true }));
 
 const io = socketIo(server, {
     cors: {
-        origin: allowedOrigins,
+        origin: "*",
         methods: ["GET", "POST"],
         credentials: true,
     }

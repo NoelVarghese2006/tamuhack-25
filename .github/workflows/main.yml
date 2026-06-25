@@ -1,0 +1,15 @@
+name: Keep MongoDB Alive
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 */20 * *"  # every ~20 days
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Call Mongo Health Check
+        run: |
+          curl -i https://tamuhack-25.vercel.app//api/health
